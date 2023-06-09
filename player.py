@@ -23,14 +23,27 @@ class Player(pg.sprite.Sprite):
         
         # timers
         self.timers = {
-            'tool_use': Timer(350,self.use_tool)
+            'tool_use': Timer(350,self.use_tool),
+            'tool_switch': Timer(200),
+            'seed_use': Timer(350,self.use_seed),
+            'seed_switch': Timer(200)
         }
         
-        #tools
-        self.selected_tool = 'axe'
+        # tools
+        self.tools = ['hoe','axe','water']
+        self.tool_index = 0 # default being 0
+        self.selected_tool = self.tools[self.tool_index]
+        
+        # seeds
+        self.seeds = ['corn', 'tomato']
+        self.seed_index = 0
+        self.selected_seed = self.seeds[self.seed_index]
         
     def use_tool(self):
         print(self.selected_tool)
+        
+    def use_seed(self):
+        print(self.selected_seed)
     
     def import_assets(self):
         self.animations = {'up':[],'down':[],'left':[],'right':[],
@@ -76,9 +89,35 @@ class Player(pg.sprite.Sprite):
         # tool use    
         if keys[pg.K_SPACE]:
             self.timers['tool_use'].activate()
+            self.direction = pg.math.Vector2() #default: x=0 y=0
+            self.frame_index = 0 # makes the animation always start at index 0
+        
+        # change tool
+        if keys[pg.K_q] and not self.timers['tool_switch'].active:
+            self.timers['tool_switch'].activate()
+            self.tool_index += 1
+            # handle index out of bound
+            if self.tool_index >= len(self.tools):
+                self.tool_index = 0
+            self.selected_tool = self.tools[self.tool_index]
             
+        # seed use
+        if keys[pg.K_LCTRL]:
+            self.timers['seed_use'].activate()
+            self.direction = pg.math.Vector2() # default: x=0 y=0
+            self.frame_index = 0 # makes the animation always start at index 0
+        
+        # change seed
+        if keys[pg.K_e] and not self.timers['seed_switch'].active:
+            self.timers['seed_switch'].activate()
+            self.seed_index += 1
+            # handle index out of bound
+            if self.seed_index >= len(self.seeds):
+                self.seed_index = 0
+            self.selected_seed = self.seeds[self.seed_index]
+            print(self.selected_seed)
             
-            
+                    
     def get_status(self):
         # if the player is not moving, add idle to the status
         if self.direction.magnitude() == 0: # not moving
