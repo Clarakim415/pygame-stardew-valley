@@ -15,6 +15,7 @@ class Player(pg.sprite.Sprite):
         self.image = self.animations[self.status][self.frame_index]
         #self.image.fill('blue')
         self.rect = self.image.get_rect(center=pos)
+        self.z = LAYERS['main']
         
         # movement attributes
         self.direction = pg.math.Vector2(x=0,y=0) # (Left&Right direction, Up&Down direction)
